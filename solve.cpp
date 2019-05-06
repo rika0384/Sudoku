@@ -2,8 +2,11 @@
 #include <string>
 #include <fstream>
 
-#define SIZE 9
-int grid[SIZE][SIZE];
+#define GRIDSIZE 9
+#define BLOCKSIZE 3
+#define BLOCKNUM 3
+
+int grid[GRIDSIZE][GRIDSIZE];
 
 int input(std::string filename){
     std::ifstream ifs(filename);
@@ -12,8 +15,8 @@ int input(std::string filename){
         return -1;
     }
 
-    for(int i = 0; i < SIZE; i++){
-        for(int j = 0; j < SIZE; j++){
+    for(int i = 0; i < GRIDSIZE; i++){
+        for(int j = 0; j < GRIDSIZE; j++){
             ifs >> grid[i][j];
         }
     }
@@ -21,8 +24,8 @@ int input(std::string filename){
 }
 
 void output(void){
-    for(int i = 0; i < SIZE; i++){
-        for(int j = 0; j < SIZE; j++){
+    for(int i = 0; i < GRIDSIZE; i++){
+        for(int j = 0; j < GRIDSIZE; j++){
             std::cout << grid[i][j] << " ";
         }
         std::cout << std::endl;
@@ -30,8 +33,50 @@ void output(void){
     return;
 }
 
-void solve(){
+bool check(){
+    for(int i = 0; i < GRIDSIZE; i++){ // i 行目のチェック
+        int cnt[GRIDSIZE+1] = {};
+        for(int j = 0; j < GRIDSIZE; j++){
+            if(grid[i][j] > 0) cnt[grid[i][j]]++;
+            if(cnt[grid[i][j]] >= 2) return false;
+        }
+    }
 
+    for(int j = 0; j < GRIDSIZE; j++){ // j 列目のチェック
+        int cnt[GRIDSIZE+1] = {};
+        for(int i = 0; i < GRIDSIZE; i++){
+            if(grid[i][j] > 0){
+                cnt[grid[i][j]]++;
+                if(cnt[grid[i][j]] >= 2) return false;
+            }
+        }
+    }
+
+    for(int p = 0; p < BLOCKNUM; p++){
+        for(int q = 0; q < BLOCKNUM; q++){
+            // 左上を (BLOCKNUM*p, BLOCKNUM*q) とするブロックのチェック
+            int cnt[GRIDSIZE+1] = {};
+            for(int i = 0; i < BLOCKSIZE; i++){
+                for(int j = 0; j < BLOCKSIZE; j++){
+                    int num = grid[BLOCKNUM*p + i][BLOCKNUM*q + j];
+                    if(num > 0){
+                        cnt[num]++;
+                        if(cnt[num] >= 2) return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+
+bool solve(int i, int j){
+
+    //
+    
+    return true;
 }
 
 
@@ -43,9 +88,11 @@ int main(){
 
     output();
 
-    solve();
-
-    std:: cout << "結果" << std::endl;
-    output();
-
+    if(solve(0,0)){
+        std::cout << "成功しました" << std::endl;
+        std::cout << "結果" << std::endl;
+        output();
+    }else{
+        std::cout << "失敗しました" << std::endl;
+    }
 }
