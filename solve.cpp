@@ -72,11 +72,21 @@ bool check(){
 }
 
 
-bool solve(int i, int j){
 
-    //
-    
-    return true;
+bool solve(int i, int j){
+    if(i > GRIDSIZE)return true;
+    if(check() == false)return false;
+    if(grid[i][j] != 0){
+        return solve(i + (j+1 == GRIDSIZE), (j+1) % GRIDSIZE);
+    }
+    for(int num = 1; num <= GRIDSIZE; num++){
+        grid[i][j] = num;
+        if(check() && solve(i + (j+1 == GRIDSIZE), (j+1) % GRIDSIZE)){
+            return true;
+        }
+    }
+    grid[i][j] = 0;
+    return false;
 }
 
 
