@@ -33,41 +33,38 @@ void output(void){
     return;
 }
 
-bool check(){
-    for(int i = 0; i < GRIDSIZE; i++){ // i 行目のチェック
+bool check(int x, int y){
+    { // x 行目のチェック
         int cnt[GRIDSIZE+1] = {};
         for(int j = 0; j < GRIDSIZE; j++){
-            if(grid[i][j] > 0) cnt[grid[i][j]]++;
-            if(cnt[grid[i][j]] >= 2) return false;
+            if(grid[x][j] > 0) cnt[grid[x][j]]++;
+            if(cnt[grid[x][j]] >= 2) return false;
         }
     }
 
-    for(int j = 0; j < GRIDSIZE; j++){ // j 列目のチェック
+    { // y 列目のチェック
         int cnt[GRIDSIZE+1] = {};
         for(int i = 0; i < GRIDSIZE; i++){
-            if(grid[i][j] > 0){
-                cnt[grid[i][j]]++;
-                if(cnt[grid[i][j]] >= 2) return false;
+            if(grid[i][y] > 0){
+                cnt[grid[i][y]]++;
+                if(cnt[grid[i][y]] >= 2) return false;
             }
         }
     }
 
-    for(int p = 0; p < BLOCKNUM; p++){
-        for(int q = 0; q < BLOCKNUM; q++){
-            // 左上を (BLOCKNUM*p, BLOCKNUM*q) とするブロックのチェック
-            int cnt[GRIDSIZE+1] = {};
-            for(int i = 0; i < BLOCKSIZE; i++){
-                for(int j = 0; j < BLOCKSIZE; j++){
-                    int num = grid[BLOCKNUM*p + i][BLOCKNUM*q + j];
-                    if(num > 0){
-                        cnt[num]++;
-                        if(cnt[num] >= 2) return false;
-                    }
+    {// 左上を (BLOCKNUM*x/3, BLOCKNUM*y/3) とするブロックのチェック
+        int cnt[GRIDSIZE+1] = {};
+        for(int i = 0; i < BLOCKSIZE; i++){
+            for(int j = 0; j < BLOCKSIZE; j++){
+                int num = grid[BLOCKNUM*(x/3) + i][BLOCKNUM*(y/3) + j];
+                if(num > 0){
+                    cnt[num]++;
+                    if(cnt[num] >= 2) return false;
                 }
             }
         }
     }
-
+    //std::cout << x << " " << y << std::endl;
     return true;
 }
 
@@ -75,17 +72,18 @@ bool check(){
 
 bool solve(int i, int j){
     if(i > GRIDSIZE)return true;
-    if(check() == false)return false;
+    if(check(i,j) == false)return false;
     if(grid[i][j] != 0){
         return solve(i + (j+1 == GRIDSIZE), (j+1) % GRIDSIZE);
     }
     for(int num = 1; num <= GRIDSIZE; num++){
         grid[i][j] = num;
-        if(check() && solve(i + (j+1 == GRIDSIZE), (j+1) % GRIDSIZE)){
+        if(check(i,j) && solve(i + (j+1 == GRIDSIZE), (j+1) % GRIDSIZE)){
             return true;
         }
     }
     grid[i][j] = 0;
+    //std::cout << i << " " << j << std::endl;
     return false;
 }
 
